@@ -1,23 +1,44 @@
 import axios from "axios";
 import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 function CompleteProfilePage() {
+    const [defaultData, setDefaultData] = useState({
+        fullName: "",
+        url: ""
+    });
   const [userData, setUserData] = useState({
     fullName: "",
     url: "",
   });
+  useEffect(() => {
+    getPreviousValues();
+  }, [])
+
+  async function getPreviousValues() {
+    let idToken = localStorage.getItem("idToken");
+
+    const res = await axios.post(
+        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAcEPtUojmINWD51NeqF0UljCHCjEc2MxM",
+        {
+            idToken: idToken
+        }
+    );
+    setDefaultData({
+        fullName: res.data.users[0].displayName,
+        url: res.data.users[0].photoUrl,
+    });
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(userData);
     let idToken = localStorage.getItem("idToken");
-
     try {
       const res = await axios.post(
         "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyAcEPtUojmINWD51NeqF0UljCHCjEc2MxM",
@@ -33,7 +54,6 @@ function CompleteProfilePage() {
       toast(e.response.data.error.message);
     }
   };
-
   return (
     <div>
       <form
@@ -56,7 +76,6 @@ function CompleteProfilePage() {
             required
           />
         </div>
-
         <div className="mt-2">
           <label className="d-flex justify-content-center">
             Profile Photo URL
@@ -70,7 +89,6 @@ function CompleteProfilePage() {
             required
           />
         </div>
-
         <div className="d-flex justify-content-center mt-2">
           <input
             type="submit"
@@ -85,5 +103,4 @@ function CompleteProfilePage() {
     </div>
   );
 }
-
 export default CompleteProfilePage;

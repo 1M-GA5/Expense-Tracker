@@ -10,14 +10,12 @@ function Login() {
         email: "",
         password: "",
     });
-
-    console.log(userData);
     // console.log(userData);
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const { setIsLogin } = useContext(AuthContext);
     const { setIdToken ,setIsLogin } = useContext(AuthContext);
+    const { setIdToken ,setIsLogin, setShow } = useContext(AuthContext);
 
     const handleChange = (e) => {
         // e.preventDefault();
@@ -39,7 +37,6 @@ function Login() {
             returnSecureToken: true,
             }
           );
-
           // if(res.status === 200) console.log(res.status)
           localStorage.setItem("idToken", res.data.idToken);
           setIdToken(res.data.idToken)
@@ -119,6 +116,13 @@ function Login() {
             }}>
             New User?
           </button>
+
+          <button className="btn bg-gradient btn-secondary"
+            onClick={() => setShow(true)}
+            style={{
+              // backgroundColor: "#d3dce8",
+              color: "white"
+            }}>Forgot Password?</button>
         </div>
       </form>
     </div>

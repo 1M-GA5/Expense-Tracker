@@ -1,13 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react'
-
 function VerifyEmail() {
-
     const [isverified, setIsVerified] = useState(true);
     const [text, settext] = useState(
         "Your Email is not verified. Please verify it."
     );
-
     const verifyEmailId = async () => {
         const res = await axios.post(
             "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAcEPtUojmINWD51NeqF0UljCHCjEc2MxM",
@@ -18,6 +15,7 @@ function VerifyEmail() {
         );
 
         settext("Please check your mail and confirm the mail💻...");
+        settext("Please check your mailbox and confirm the mail💻...");
         setIsVerified(false);
     }
   return (
@@ -30,5 +28,4 @@ function VerifyEmail() {
     </div>
   )
 }
-
 export default VerifyEmail

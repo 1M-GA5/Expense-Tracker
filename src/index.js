@@ -1,12 +1,14 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import ReactDOM from 'react-dom';
-import React from 'react';
 import reportWebVitals from './reportWebVitals';
+import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter } from 'react-router-dom';
 import "../node_modules/react-bootstrap/dist/react-bootstrap";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import AuthProvider from "./context/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,6 +16,11 @@ root.render(
     <BrowserRouter>
     <App />
     </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>
 );
 

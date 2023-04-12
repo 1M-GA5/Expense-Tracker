@@ -1,84 +1,50 @@
-import React, { useState } from "react";
 import React, { useContext, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form, ToastContainer } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
-
 function Login() {
-
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         email: "",
         password: "",
     });
 
+    console.log(userData);
+    // console.log(userData);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const { setIsLogin } = useContext(AuthContext);
+    const { setIdToken ,setIsLogin } = useContext(AuthContext);
 
     const handleChange = (e) => {
-        e.preventDefault();
-        const {placeholder, value} = e.target;
-        setUserData({...userData, [placeholder]: value});
+        // e.preventDefault();
+        // console.log(e.target.name);
+        // let value = e.target.value;
+        const {name, value} = e.target;
+        setUserData({...userData, [name]: value});
     };
-
-    const handleSubmit = (e) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         localStorage.setItem('userEmail', userData.email)
-
-        fetch(
         try {
           setIsLoading(true);
           const res = await axios.post(
             "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAcEPtUojmINWD51NeqF0UljCHCjEc2MxM",
             {
-                method: "POST",
-                body: JSON.stringify({
-                    email: userData.email,
-                    password: userData.password,
-                    returnSecureToken: true,
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
-        )
-        .then((res) => {
-            if(res.ok) {
-                return res.json();
-            } 
-            else {
-                res.json().then((data) => {
-                    let errorMessage = "Authenticaton failed";
-                    if (data.error.message) {
-                        alert(data.error.message);
-                    }
-                    else {
-                        alert(errorMessage);
-                    }
-                    throw new Error(errorMessage);
-                })
             email: userData.email,
             password: userData.password,
             returnSecureToken: true,
             }
-        })
-        .then((data) => {
-            localStorage.setItem("token", data.idToken);
-            navigate('/store')
-        })
-        .catch((err) => {
-            console.error(err.message);
-        })
           );
 
-          if(res.status == 200) console.log(res.status)
+          // if(res.status === 200) console.log(res.status)
+          localStorage.setItem("idToken", res.data.idToken);
+          setIdToken(res.data.idToken)
           toast("User Logged-In successfully👍");
-          navigate("/");
+          navigate("/VerifyEmail");
         }
         catch(e) {
           toast(e.response.data.error.message);
@@ -86,9 +52,9 @@ function Login() {
         setIsLoading(false);
         document.querySelector("form").reset();
     };
-
   return (
     <div>
+      <ToastContainer />
       <h1 className="display-1 border-3 border-dark m-auto my-3 w-25 p-3 mt-10 text-center">
         Login
       </h1>
@@ -100,9 +66,11 @@ function Login() {
         <div>
           <label  className="d-flex justify-content-center">E-mail Address</label>
           <input
+            name="email"
             type="email"
             className="form-control"
             onChange={handleChange}
+            // value={userData.email}
             placeholder="Enter Your Email Here"
             required
           />
@@ -114,17 +82,17 @@ function Login() {
         <div className="mt-2">
           <label className="d-flex justify-content-center">Password</label>
           <input
+            name="password"
             type="password"
             className="form-control"
             onChange={handleChange}
+            // value={userData.password}
             placeholder="Enter Your Password Here"
             required
           />
         </div>
-
-        <div className="d-flex justify-content-center mt-2">
-          <input type="submit" className="btn bg-gradient" style={{backgroundColor: "#d3dce8", color: "black", fontWeight: "bold"}} value="Login" />
-        <button
+        <div className="d-flex justify-content-center mt-2 gap-3">
+        {/* <button
             type="submit"
             className="btn bg-gradient"
             style={{
@@ -135,16 +103,19 @@ function Login() {
             disabled={isLoading}
           >
             {isLoading ? "Wait I'm Working🏃..." : "Login"}
-          </button>
-
+          </button> */}
+          {isLoading && "Wait I'm Working🏃..."}
+          {!isLoading && <input type="submit" className="btn bg-gradient btn-secondary" style={{
+              // backgroundColor: "#d3dce8",
+              color: "white"
+            }}
+            value="Login"/>}
           <button
-            type="submit"
-            className="btn bg-gradient"
+            className="btn bg-gradient btn-secondary"
             onClick={() => setIsLogin(false)}
             style={{
-              backgroundColor: "#d3dce8",
-              color: "black",
-              fontWeight: "bold",
+              // backgroundColor: "#d3dce8",
+              color: "white"
             }}>
             New User?
           </button>

@@ -1,18 +1,20 @@
-import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Signup from '../Auth/Signup'
-import Home from './Home'
-import { AuthContext } from '../../context/AuthContext'
-import Login from '../Auth/Login'
+mport React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
-function AllRoutes() {
-  const { isLogin } = useContext(AuthContext);
-  return (
-    <Routes>
-      <Route path='/' element={<Home />} />
-      <Route path='/auth' element={isLogin? <Login /> : <Signup />} />
-    </Routes>
-  )
+export const AuthContext = createContext();
+const AuthProvider = ({children}) => {
+    const [isLogin, setIsLogin] = useState(false);
+    const [IdToken, setIdToken] = useState(null);
+
+    useEffect(() => {
+        setIdToken(localStorage.getItem("idToken"));
+    }, [])
+
+    return (
+        <AuthContext.Provider value={{isLogin, setIsLogin}}>
+        <AuthContext.Provider value={{IdToken, setIdToken,isLogin, setIsLogin}}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
-
-export default AllRoutes
+export default AuthProvider;
